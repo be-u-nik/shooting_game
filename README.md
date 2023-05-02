@@ -15,3 +15,9 @@
 Animations are made using DragonBones, Spine
 
 Preview available [here](https://tcskiran.github.io/shooting_game/)
+
+### Game instructions
+
+Press up, down arrows for movement
+
+Press d for debug mode
