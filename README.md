@@ -10,5 +10,8 @@
 1. Create pointing/score system
 1. Adding time limit to game
 1. Writing win/lose conditions
+1. Adding animations for everything(takes some time)
 
 Animations are made using DragonBones, Spine
+
+Preview available [here](https://tcskiran.github.io/shooting_game/)
