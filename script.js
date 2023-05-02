@@ -431,7 +431,16 @@ window.addEventListener('load', function () {
       context.fillText('Score: ' + this.game.score, 20, 40);
       // game timer
       const formattedTime = (this.game.gameTime * 0.001).toFixed(1); // only one decimal place
-      context.fillText('Timer: ' + formattedTime, 20, 100);
+      context.fillText(
+        'Timer: ' +
+          formattedTime +
+          '   Target: ' +
+          this.game.winningScore +
+          '    Time: ' +
+          this.game.timeLimit * 0.001,
+        20,
+        100
+      );
       // game over messages
       if (this.game.gameOver) {
         context.textAlign = 'center';
@@ -485,7 +494,7 @@ window.addEventListener('load', function () {
       this.ammoInterval = 350;
       this.gameOver = false;
       this.score = 0;
-      this.winningScore = 30;
+      this.winningScore = 100;
       this.gameTime = 0;
       this.timeLimit = 30000;
       this.speed = 1;
