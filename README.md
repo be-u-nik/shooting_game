@@ -18,6 +18,8 @@ Preview available [here](https://tcskiran.github.io/shooting_game/)
 
 ### Game instructions
 
+#### **For PC**
+
 Press up, down arrows for movement
 
 Press space for bullets
@@ -25,3 +27,11 @@ Press space for bullets
 Press d for debug mode
 
 press Enter for restarting the game
+
+#### **For mobile**
+
+Swipe up, down for movement
+
+Press on the right side of screen for bullets
+
+Swipe horizontally for restarting the game

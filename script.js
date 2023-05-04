@@ -5,10 +5,17 @@ window.addEventListener('load', function () {
   const ctx = canvas.getContext('2d'); // 'webgl' for 3d
   canvas.width = 1500;
   canvas.height = 500;
+  let mobileDevice = false;
 
   class InputHandler {
     constructor(game) {
       this.game = game;
+      this.touchX = '';
+      this.touchY = '';
+      this.canvasLeft = canvas.getBoundingClientRect().left;
+      this.canvasRight = canvas.getBoundingClientRect().right;
+      this.canvasWidth = canvas.getBoundingClientRect().width;
+      this.touchTreshold = 30;
       window.addEventListener('keydown', (e) => {
         if (
           (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
@@ -26,6 +33,63 @@ window.addEventListener('load', function () {
       window.addEventListener('keyup', (e) => {
         if (this.game.keys.indexOf(e.key) > -1) {
           this.game.keys.splice(this.game.keys.indexOf(e.key), 1);
+        }
+      });
+      // for mobile
+      window.addEventListener('touchstart', (e) => {
+        mobileDevice = true;
+        this.touchX = e.changedTouches[0].pageX;
+        this.touchY = e.changedTouches[0].pageY;
+        if (
+          this.touchX > this.canvasLeft + this.canvasWidth * 0.5 &&
+          this.touchX < this.canvasRight
+        ) {
+          this.game.player.shootTop();
+        }
+      });
+      window.addEventListener('touchmove', (e) => {
+        const swipeDistance = e.changedTouches[0].pageY - this.touchY;
+        const swipeHorizontal = e.changedTouches[0].pageX - this.touchX;
+        // movement
+        if (
+          swipeDistance < -this.touchTreshold &&
+          this.game.keys.indexOf('SwipeUp') === -1
+        ) {
+          this.game.keys.push('SwipeUp');
+          if (this.game.keys.indexOf('SwipeDown') > -1) {
+            this.game.keys.splice(this.game.keys.indexOf('SwipeDown'), 1);
+          }
+        }
+        if (
+          swipeDistance > this.touchTreshold &&
+          this.game.keys.indexOf('SwipeDown') === -1
+        ) {
+          this.game.keys.push('SwipeDown');
+          if (this.game.keys.indexOf('SwipeUp') > -1) {
+            this.game.keys.splice(this.game.keys.indexOf('SwipeUp'), 1);
+          }
+        }
+        // shoot
+        if (
+          this.touchX > this.canvasLeft + this.canvasWidth * 0.5 &&
+          this.touchX < this.canvasRight
+        ) {
+          this.game.player.shootTop();
+        }
+        // restart
+        if (
+          Math.abs(swipeHorizontal) > this.touchTreshold &&
+          this.game.gameOver
+        ) {
+          this.game.restartGame();
+        }
+      });
+      window.addEventListener('touchend', (e) => {
+        if (this.game.keys.indexOf('SwipeUp') > -1) {
+          this.game.keys.splice(this.game.keys.indexOf('SwipeUp'), 1);
+        }
+        if (this.game.keys.indexOf('SwipeDown') > -1) {
+          this.game.keys.splice(this.game.keys.indexOf('SwipeDown'), 1);
         }
       });
     }
@@ -124,10 +188,15 @@ window.addEventListener('load', function () {
       this.powerUpLimit = 10000;
     }
     update(deltaTime) {
-      if (this.game.keys.includes('ArrowUp') && this.y >= -this.height * 0.5)
+      if (
+        (this.game.keys.includes('ArrowUp') ||
+          this.game.keys.includes('SwipeUp')) &&
+        this.y >= -this.height * 0.5
+      )
         this.speedY = -this.maxSpeed;
       else if (
-        this.game.keys.includes('ArrowDown') &&
+        (this.game.keys.includes('ArrowDown') ||
+          this.game.keys.includes('SwipeDown')) &&
         this.y <= this.game.height - this.height * 0.5
       )
         this.speedY = this.maxSpeed;
@@ -470,7 +539,11 @@ window.addEventListener('load', function () {
           message1 = 'You lost this game man!!!';
           message2 = 'Repair me and try again!';
         }
-        message3 = 'Press Enter to play again';
+        if (mobileDevice) {
+          message3 = 'Swipe horizontally to play again';
+        } else {
+          message3 = 'Press Enter to play again';
+        }
         context.font = '75px ' + this.fontFamily;
         context.fillText(
           message1,
