@@ -20,4 +20,8 @@ Preview available [here](https://tcskiran.github.io/shooting_game/)
 
 Press up, down arrows for movement
 
+Press space for bullets
+
 Press d for debug mode
+
+press Enter for restarting the game

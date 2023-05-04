@@ -19,6 +19,8 @@ window.addEventListener('load', function () {
           this.game.player.shootTop();
         } else if (e.key === 'd') {
           this.game.debug = !this.game.debug;
+        } else if (e.key === 'Enter') {
+          this.game.restartGame();
         }
       });
       window.addEventListener('keyup', (e) => {
@@ -197,6 +199,16 @@ window.addEventListener('load', function () {
       this.powerUp = true;
       this.game.ammo = Math.max(this.game.maxAmmo, this.game.ammo);
     }
+    restart() {
+      this.x = 20;
+      this.y = 100;
+      this.frameX = 0;
+      this.frameY = 0;
+      this.speedY = 0;
+      this.projectiles = [];
+      this.powerUp = false;
+      this.powerUpTimer = 0;
+    }
   }
 
   class Enemy {
@@ -330,6 +342,9 @@ window.addEventListener('load', function () {
       context.drawImage(this.image, this.x, this.y);
       context.drawImage(this.image, this.x + this.width, this.y);
     }
+    restart() {
+      this.x = 0;
+    }
   }
 
   class Background {
@@ -351,6 +366,9 @@ window.addEventListener('load', function () {
     }
     draw(context) {
       this.layers.forEach((layer) => layer.draw(context));
+    }
+    restart() {
+      this.layers.forEach((layer) => layer.restart());
     }
   }
 
@@ -444,7 +462,7 @@ window.addEventListener('load', function () {
       // game over messages
       if (this.game.gameOver) {
         context.textAlign = 'center';
-        let message1, message2;
+        let message1, message2, message3;
         if (this.game.score > this.game.winningScore) {
           message1 = 'You won this game!!!';
           message2 = 'Well done!';
@@ -452,6 +470,7 @@ window.addEventListener('load', function () {
           message1 = 'You lost this game man!!!';
           message2 = 'Repair me and try again!';
         }
+        message3 = 'Press Enter to play again';
         context.font = '75px ' + this.fontFamily;
         context.fillText(
           message1,
@@ -463,6 +482,12 @@ window.addEventListener('load', function () {
           message2,
           this.game.width * 0.5,
           this.game.height * 0.5 + 20
+        );
+        context.font = '15px ' + this.fontFamily;
+        context.fillText(
+          message3,
+          this.game.width * 0.5,
+          this.game.height * 0.5 + 50
         );
       }
       // ammo
@@ -572,7 +597,6 @@ window.addEventListener('load', function () {
                 }
               }
               if (!this.gameOver) this.score += enemy.score;
-              // if (this.score > this.winningScore) this.gameOver = true;
             }
           }
         });
@@ -628,6 +652,22 @@ window.addEventListener('load', function () {
         rect1.y < rect2.y + rect2.height &&
         rect1.y + rect1.height > rect2.y
       );
+    }
+    restartGame() {
+      this.background.restart();
+      this.background.layer4.restart();
+      this.player.restart();
+      this.keys = [];
+      this.enemies = [];
+      this.particles = [];
+      this.explosions = [];
+      this.enemyTimer = 0;
+      this.ammo = 20;
+      this.ammoTimer = 0;
+      this.gameOver = false;
+      this.score = 0;
+      this.gameTime = 0;
+      this.debug = false;
     }
   }
 
